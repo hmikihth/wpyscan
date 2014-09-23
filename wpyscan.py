@@ -45,7 +45,7 @@ def print_sploits(wprecon_results):
             for sploit in sploits:
                 print "    [!] %s" % sploit
 
-        # Search them related sploits
+        # Search theme related sploits
         theme = wprecon_results['printable_results']['Theme']
         if theme is not None:
             sploits = grabber_obj.search(theme)
