@@ -6,9 +6,17 @@ Wordpress pentest tool
 Description :
 -------------
 
-Scan wordpress for infos (modules, theme, backups, etc.)
+Scan wordpress for infos:
+ - Modules
+ - Version
+ - Theme
+ - Robots.txt
+ - Readme.html
+ - Full path disclosure
+ - Backups files
+ - Directory listing in upload directory
 
-Search exploits on exploit-db.
+Search exploits on exploit-db according to recon informations (version, modules and theme).
 
 Input arguments :
 -----------------
