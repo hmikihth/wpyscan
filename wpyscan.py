@@ -24,7 +24,11 @@ def main(url, grabber, recon, proxy):
 
     print_recon(wprecon_results)
     if not recon:
-        print_sploits(wprecon_results)
+        # Search sploits
+        grabbers = get_grabbers()
+        print_modules_sploits(grabbers, wprecon_results)
+        print_theme_sploits(grabbers, wprecon_results)
+        print_version_sploits(grabbers, wprecon_results)
 
 
 def print_recon(wprecon_results):
@@ -39,30 +43,37 @@ def print_recon(wprecon_results):
                 print "  [+] %s" % result
 
 
-def print_sploits(wprecon_results):
-    # Search sploits
+def print_modules_sploits(grabbers, wprecon_results):
+    # Search for vulnerable modules
     print "[*] Modules"
-    grabbers = get_grabbers()
-    for grabber in grabbers:
-        grabber_obj = grabber()
-
-        # Search for vulnerable modules
-        for module in wprecon_results['modules']:
-            print "  [+] %s" % module
+    for module in wprecon_results['modules']:
+        print "  [+] %s" % module
+        for grabber in grabbers:
+            grabber_obj = grabber()
             sploits = grabber_obj.search(module)
             for sploit in sploits:
                 print "    [!] %s" % sploit
 
-        # Search theme related sploits
-        theme = wprecon_results['printable_results']['Theme']
-        if theme is not None:
+
+def print_theme_sploits(grabbers, wprecon_results):
+    # Search theme related sploits
+    theme = wprecon_results['printable_results']['Theme']
+    if theme is not None:
+        print "[*] Searching sploits for theme %s" % theme
+        for grabber in grabbers:
+            grabber_obj = grabber()
             sploits = grabber_obj.search(theme)
             for sploit in sploits:
                 print "  [+] %s" % sploit
 
-        # Search wordpress version related sploits
-        version = wprecon_results['printable_results']['Version']
-        if version is not None:
+
+def print_version_sploits(grabbers, wprecon_results):
+    # Search wordpress version related sploits
+    version = wprecon_results['printable_results']['Version']
+    if version is not None:
+        print "[*] Searching sploits for wordpress %s" % version
+        for grabber in grabbers:
+            grabber_obj = grabber()
             sploits = grabber_obj.search(version)
             for sploit in sploits:
                 print "  [+] %s" % sploit
