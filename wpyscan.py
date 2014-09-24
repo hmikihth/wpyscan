@@ -25,10 +25,12 @@ def main(url, grabber, recon, proxy):
     print_recon(wprecon_results)
     if not recon:
         # Search sploits
-        grabbers = get_grabbers()
-        print_modules_sploits(grabbers, wprecon_results)
-        print_theme_sploits(grabbers, wprecon_results)
-        print_version_sploits(grabbers, wprecon_results)
+        grabbers_objects = []
+        for grabber in get_grabbers():
+            grabbers_objects.append(grabber())
+        print_modules_sploits(grabbers_objects, wprecon_results)
+        print_theme_sploits(grabbers_objects, wprecon_results)
+        print_version_sploits(grabbers_objects, wprecon_results)
 
 
 def print_recon(wprecon_results):
@@ -49,8 +51,7 @@ def print_modules_sploits(grabbers, wprecon_results):
     for module in wprecon_results['modules']:
         print "  [+] %s" % module
         for grabber in grabbers:
-            grabber_obj = grabber()
-            sploits = grabber_obj.search(module)
+            sploits = grabber.search(module)
             for sploit in sploits:
                 print "    [!] %s" % sploit
 
@@ -61,8 +62,7 @@ def print_theme_sploits(grabbers, wprecon_results):
     if theme is not None:
         print "[*] Searching sploits for theme %s" % theme
         for grabber in grabbers:
-            grabber_obj = grabber()
-            sploits = grabber_obj.search(theme)
+            sploits = grabber.search(theme)
             for sploit in sploits:
                 print "  [+] %s" % sploit
 
@@ -73,8 +73,7 @@ def print_version_sploits(grabbers, wprecon_results):
     if version is not None:
         print "[*] Searching sploits for wordpress %s" % version
         for grabber in grabbers:
-            grabber_obj = grabber()
-            sploits = grabber_obj.search(version)
+            sploits = grabber.search(version)
             for sploit in sploits:
                 print "  [+] %s" % sploit
 
