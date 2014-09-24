@@ -36,7 +36,7 @@ class WPRecon():
         results = {
             'Robots': self.get_robots(url),
             'Readme': self.get_readme(url),
-            'Fpd': self.get_fpd(url),
+            'Full path disclosure': self.get_fpd(url),
             'Backup': self.get_backup(url),
             'Upload_listing': self.get_upload_listing(url),
             'Version': self.get_version(url),
@@ -44,13 +44,7 @@ class WPRecon():
         return results
 
     def get_user_agent(self):
-        user_agents = ["Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; en) Opera 9.50",
-                       "Opera/9.70 (Linux ppc64 ; U; en) Presto/2.2.1",
-                       "Mozilla/5.0 (compatible; googlebot/2.1; +http://www.google.com/bot.html)",
-                       "Mozilla/5.0(Windows; U; Windows NT 5.2; rv:1.9.2) Gecko/20100101 Firefox/3.6",
-                       "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1) Gecko/20090612 Firefox/3.5",
-                       "Mozilla/5.0 (Windows; U; Windows NT 6.0; ru; rv:1.9.2) Gecko/20100115 Firefox/3.6",
-                       "Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en) AppleWebKit/418.9 (KHTML, like Gecko) Safari/419.3"]
+        user_agents = ["Opera/9.70 (Linux ppc64 ; U; en) Presto/2.2.1"]
         return random.choice(user_agents)
 
     # Recon methods
@@ -64,24 +58,24 @@ class WPRecon():
         # Search modules in css
         module_paths = soup.findAll("link", {"rel": "stylesheet"})
         for module_path in module_paths:
-            if '/wp-content/plugins/' in module_path['href']:
-                regex = re.compile("/wp-content/plugins/(.+)/",
+            if 'wp-content/plugins/' in module_path['href']:
+                regex = re.compile("wp-content/plugins/([a-zA-Z0-9-_]+)/",
                                    re.IGNORECASE)
                 r = regex.findall(module_path['href'])
                 for module_name in r:
-                    modules.append(module_name.split('/')[0])
+                    modules.append(module_name)
 
         # Search modules in javascript
         module_paths = soup.findAll("script",
                                     {"type": "text/javascript"})
         for module_path in module_paths:
             try:
-                if '/wp-content/plugins/' in module_path['src']:
-                    regex = re.compile("/wp-content/plugins/(.+)/",
+                if 'wp-content/plugins/' in module_path['src']:
+                    regex = re.compile("wp-content/plugins/([a-zA-Z0-9-_]+)/",
                                        re.IGNORECASE)
                     r = regex.findall(module_path['src'])
                     for module_name in r:
-                        modules.append(module_name.split('/')[0])
+                        modules.append(module_name)
             except:
                 # Silently pass, parsing html is pain in the ass
                 pass
@@ -118,11 +112,12 @@ class WPRecon():
 
     def get_fpd(self, url):
         headers = {'User-Agent': self.get_user_agent()}
-        full_url = "%s%s" % (url, "wp-includes/rss-functions.php")
+        page = 'wp-includes/rss-functions.php'
+        full_url = "%s%s" % (url, page)
         fpd_req = self.req.get(full_url, headers=headers)
         if fpd_req.status_code == 200:
             if "Fatal error:" in fpd_req.text:
-                return fpd_req.text
+                return full_url
         return None
 
     def get_backup(self, url):
@@ -171,7 +166,9 @@ class WPRecon():
         page_req = self.req.get(url, headers=headers)
         soup = BeautifulSoup(page_req.text)
         generator = soup.find("meta", {'name': 'generator'})
-        self.version = generator['content'].replace('Wordpress ', '').strip()
+        if generator is not None:
+            self.version = generator['content'].replace('Wordpress ',
+                                                        '').strip()
         return self.version
 
     def get_theme(self, url):
@@ -181,8 +178,8 @@ class WPRecon():
         theme_paths = soup.findAll("link", {"rel": "stylesheet",
                                             "type": "text/css"})
         for theme_path in theme_paths:
-            if '/wp-content/themes/' in theme_path['href']:
-                regex = re.compile("/wp-content/themes/(.+)/css/",
+            if 'wp-content/themes/' in theme_path['href']:
+                regex = re.compile("wp-content/themes/([a-zA-Z0-9-_]+)/",
                                    re.IGNORECASE)
                 r = regex.findall(theme_path['href'])
                 if len(r) > 0:
