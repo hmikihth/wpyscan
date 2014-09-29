@@ -15,7 +15,7 @@ import exploit_grabber
 from inspect import isclass
 
 
-def main(url, grabber, recon, proxy):
+def main(url, recon, proxy):
     """
     Main method, start scan, and exploit retrieving
     """
@@ -111,11 +111,6 @@ if __name__ == "__main__":
                         dest='url',
                         required=True,
                         help='victim url')
-    parser.add_argument('-g', '--grabber',
-                        action='store',
-                        dest='grabber',
-                        default='exploitdb',
-                        help='Sploit grabber')
     parser.add_argument('-r', '--recon',
                         action='store_true',
                         dest='recon_only',
@@ -143,4 +138,4 @@ if __name__ == "__main__":
         proxy = {"http": args.proxy,
                  "https": args.proxy}
 
-    main(args.url, args.grabber, args.recon_only, proxy)
+    main(args.url, args.recon_only, proxy)
