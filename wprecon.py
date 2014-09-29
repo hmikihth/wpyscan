@@ -26,10 +26,10 @@ class WPRecon():
             url = "%s/" % url
 
         results = {'printable_results': [],
-                   'modules': []}
+                   'plugins': []}
 
         results['printable_results'] = self.get_printable_results(url)
-        results['modules'] = self.get_modules(url)
+        results['plugins'] = self.get_plugins(url)
         return results
 
     def get_printable_results(self, url):
@@ -49,38 +49,38 @@ class WPRecon():
 
     # Recon methods
 
-    def get_modules(self, url):
-        modules = []
+    def get_plugins(self, url):
+        plugins = []
         headers = {'User-Agent': self.get_user_agent()}
         page_req = self.req.get(url, headers=headers)
         soup = BeautifulSoup(page_req.text)
 
-        # Search modules in css
-        module_paths = soup.findAll("link", {"rel": "stylesheet"})
-        for module_path in module_paths:
-            if 'wp-content/plugins/' in module_path['href']:
+        # Search pluginss in css
+        plugin_paths = soup.findAll("link", {"rel": "stylesheet"})
+        for plugin_path in plugin_paths:
+            if 'wp-content/plugins/' in plugin_path['href']:
                 regex = re.compile("wp-content/plugins/([a-zA-Z0-9-_]+)/",
                                    re.IGNORECASE)
-                r = regex.findall(module_path['href'])
-                for module_name in r:
-                    modules.append(module_name)
+                r = regex.findall(plugin_path['href'])
+                for plugin_name in r:
+                    plugins.append(plugin_name)
 
-        # Search modules in javascript
-        module_paths = soup.findAll("script",
+        # Search plugins in javascript
+        plugin_paths = soup.findAll("script",
                                     {"type": "text/javascript"})
-        for module_path in module_paths:
+        for plugin_path in plugin_paths:
             try:
-                if 'wp-content/plugins/' in module_path['src']:
+                if 'wp-content/plugins/' in plugin_path['src']:
                     regex = re.compile("wp-content/plugins/([a-zA-Z0-9-_]+)/",
                                        re.IGNORECASE)
-                    r = regex.findall(module_path['src'])
-                    for module_name in r:
-                        modules.append(module_name)
+                    r = regex.findall(plugin_path['src'])
+                    for plugin_name in r:
+                        plugins.append(plugin_name)
             except:
                 # Silently pass, parsing html is pain in the ass
                 pass
 
-        return list(set(modules))
+        return list(set(plugins))
 
     def get_robots(self, url):
         robots = []
