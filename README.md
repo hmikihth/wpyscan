@@ -16,7 +16,7 @@ Scan wordpress for infos:
  - Backups files
  - Directory listing in upload directory
 
-Search exploits on exploit-db and wordpressexploit.com according to recon informations (version, modules and theme).
+Search exploits on exploit-db, wordpressexploit.com and wpvulndb.com according to recon informations (version, modules and theme).
 
 Input arguments :
 -----------------
