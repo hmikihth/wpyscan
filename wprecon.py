@@ -12,9 +12,9 @@ import re
 import requests
 import random
 
-
 class WPRecon():
     def __init__(self, proxy):
+        requests.packages.urllib3.disable_warnings()
         self.req = requests.Session()
         self.req.verify = False
         self.version = None
@@ -53,7 +53,7 @@ class WPRecon():
         plugins = []
         headers = {'User-Agent': self.get_user_agent()}
         page_req = self.req.get(url, headers=headers)
-        soup = BeautifulSoup(page_req.text)
+        soup = BeautifulSoup(page_req.text, "lxml")
 
         # Search pluginss in css
         plugin_paths = soup.findAll("link", {"rel": "stylesheet"})
@@ -103,7 +103,7 @@ class WPRecon():
         full_url = "%s%s" % (url, 'readme.html')
         readme_req = self.req.get(full_url, headers=headers)
         if readme_req.status_code == 200:
-            soup = BeautifulSoup(readme_req.text)
+            soup = BeautifulSoup(readme_req.text, "lxml")
             version = soup.find("h1").getText().strip()
             self.version = version.replace('Version ', '')
             return full_url
@@ -164,7 +164,7 @@ class WPRecon():
             return self.version
         headers = {'User-Agent': self.get_user_agent()}
         page_req = self.req.get(url, headers=headers)
-        soup = BeautifulSoup(page_req.text)
+        soup = BeautifulSoup(page_req.text, "lxml")
         generator = soup.find("meta", {'name': 'generator'})
         if generator is not None:
             self.version = generator['content'].replace('Wordpress ',
@@ -174,7 +174,7 @@ class WPRecon():
     def get_theme(self, url):
         headers = {'User-Agent': self.get_user_agent()}
         page_req = self.req.get(url, headers=headers)
-        soup = BeautifulSoup(page_req.text)
+        soup = BeautifulSoup(page_req.text, "lxml")
         theme_paths = soup.findAll("link", {"rel": "stylesheet",
                                             "type": "text/css"})
         for theme_path in theme_paths:
