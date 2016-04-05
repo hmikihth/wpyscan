@@ -53,7 +53,7 @@ class WPRecon():
         plugins = []
         headers = {'User-Agent': self.get_user_agent()}
         page_req = self.req.get(url, headers=headers)
-        soup = BeautifulSoup(page_req.text, "lxml")
+        soup = BeautifulSoup(page_req.text, "html.parser")
 
         # Search pluginss in css
         plugin_paths = soup.findAll("link", {"rel": "stylesheet"})
@@ -102,12 +102,15 @@ class WPRecon():
         headers = {'User-Agent': self.get_user_agent()}
         full_url = "%s%s" % (url, 'readme.html')
         readme_req = self.req.get(full_url, headers=headers)
-        if readme_req.status_code == 200:
-            soup = BeautifulSoup(readme_req.text, "lxml")
-            version = soup.find("h1").getText().strip()
-            self.version = version.replace('Version ', '')
-            return full_url
-        else:
+        try:
+            if readme_req.status_code == 200:
+              soup = BeautifulSoup(readme_req.text, "html.parser")
+              version = soup.find("h1").getText().strip()
+              self.version = version.replace('Version ', '')
+              return full_url
+            else:
+              return None
+        except:
             return None
 
     def get_fpd(self, url):
@@ -164,7 +167,7 @@ class WPRecon():
             return self.version
         headers = {'User-Agent': self.get_user_agent()}
         page_req = self.req.get(url, headers=headers)
-        soup = BeautifulSoup(page_req.text, "lxml")
+        soup = BeautifulSoup(page_req.text, "html.parser")
         generator = soup.find("meta", {'name': 'generator'})
         if generator is not None:
             self.version = generator['content'].replace('Wordpress ',
@@ -174,7 +177,7 @@ class WPRecon():
     def get_theme(self, url):
         headers = {'User-Agent': self.get_user_agent()}
         page_req = self.req.get(url, headers=headers)
-        soup = BeautifulSoup(page_req.text, "lxml")
+        soup = BeautifulSoup(page_req.text, "html.parser")
         theme_paths = soup.findAll("link", {"rel": "stylesheet",
                                             "type": "text/css"})
         for theme_path in theme_paths:
