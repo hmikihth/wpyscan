@@ -9,9 +9,9 @@ this stuff is worth it, you can buy me a beer in return.
 """
 
 import argparse
-from wprecon import WPRecon
-from exploit_grabber import ExploitGrabber
-import exploit_grabber
+from wpyscan.wprecon import WPRecon
+from wpyscan.exploit_grabber import ExploitGrabber
+import wpyscan.exploit_grabber
 from inspect import isclass
 
 
