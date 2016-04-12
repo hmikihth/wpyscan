@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 """
 ----------------------------------------------------------------------------
 "THE BEER-WARE LICENSE" (Revision 42):
@@ -9,9 +9,9 @@ this stuff is worth it, you can buy me a beer in return.
 """
 
 import argparse
-from wprecon import WPRecon
-from exploit_grabber import ExploitGrabber
-import exploit_grabber
+from wpyscan.wprecon import WPRecon
+from wpyscan.exploit_grabber import ExploitGrabber
+import wpyscan.exploit_grabber
 from inspect import isclass
 
 
@@ -37,45 +37,45 @@ def print_recon(wprecon_results):
     # Recon
     for name, result in wprecon_results['printable_results'].items():
         if result is not None:
-            print "[*] %s" % name
+            print ("[*] %s" % name)
             if isinstance(result, list):
                 for result_line in result:
-                    print "  [+] %s" % result_line
+                    print ("  [+] %s" % result_line)
             else:
-                print "  [+] %s" % result
+                print ("  [+] %s" % result)
 
 
 def print_plugins_sploits(grabbers, wprecon_results):
     # Search for vulnerable plugins
-    print "[*] Modules"
+    print ("[*] Modules")
     for plugin in wprecon_results['plugins']:
-        print "  [+] %s" % plugin
+        print ("  [+] %s" % plugin)
         for grabber in grabbers:
             sploits = grabber.search(plugin, 'plugin')
             for sploit in sploits:
-                print "    [!] %s" % sploit
+                print ("    [!] %s" % sploit)
 
 
 def print_theme_sploits(grabbers, wprecon_results):
     # Search theme related sploits
     theme = wprecon_results['printable_results']['Theme']
     if theme is not None:
-        print "[*] Searching sploits for theme %s" % theme
+        print ("[*] Searching sploits for theme %s" % theme)
         for grabber in grabbers:
             sploits = grabber.search(theme, 'theme')
             for sploit in sploits:
-                print "  [+] %s" % sploit
+                print ("  [+] %s" % sploit)
 
 
 def print_version_sploits(grabbers, wprecon_results):
     # Search wordpress version related sploits
     version = wprecon_results['printable_results']['Version']
     if version is not None:
-        print "[*] Searching sploits for wordpress %s" % version
+        print ("[*] Searching sploits for wordpress %s" % version)
         for grabber in grabbers:
             sploits = grabber.search(version, 'version')
             for sploit in sploits:
-                print "  [+] %s" % sploit
+                print ("  [+] %s" % sploit)
 
 
 def get_grabbers():
@@ -99,12 +99,12 @@ if __name__ == "__main__":
     """
     Entrypoint
     """
-    print """
+    print ("""
    -----------------------------------------
    | Imagine a fucking awesome title here  |
    | (like t-rex shooting lasers and stuff)|
    -----------------------------------------
-    """
+    """)
     parser = argparse.ArgumentParser(description='Sploit Wordpress for fun')
     parser.add_argument('-u', '--url',
                         action='store',
