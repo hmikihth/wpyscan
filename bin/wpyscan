@@ -11,7 +11,7 @@ this stuff is worth it, you can buy me a beer in return.
 import argparse
 from wpyscan.wprecon import WPRecon
 from wpyscan.exploit_grabber import ExploitGrabber
-import wpyscan.exploit_grabber
+import wpyscan.exploit_grabber as exploit_grabber
 from inspect import isclass
 
 

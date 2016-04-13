@@ -14,7 +14,7 @@ import random
 
 class WPRecon():
     def __init__(self, proxy):
-        requests.packages.urllib3.disable_warnings()
+#        requests.packages.urllib3.disable_warnings()
         self.req = requests.Session()
         self.req.verify = False
         self.version = None
