@@ -1,3 +1,4 @@
+%define debug_package  %nil
 %define name 		wpyscan
 %define Summary		Wordpress pentest tool
 %define sourcetype      tar.gz
@@ -7,7 +8,7 @@ Name:         %name
 Summary:       %Summary
 Summary(hu):   %Summary_hu
 Version:       %version
-Release:       %mkrel 1
+Release:       %mkrel 2
 License:       BEER-WARE
 Distribution: blackPanther OS
 Vendor:       blackPanther Europe
@@ -15,18 +16,19 @@ Packager:     Miklos Horvath
 Group:        Development/Tools
 Source0:      %name-%version.%sourcetype
 Buildroot:     %_tmppath/%name-%version-%release-root
-
-Requires:     python3 >= 3.4
-Requires:     python3-requests >= 2.3.0
-Requires:     glibc >= 2.19.2
+Requires:     python(abi) >= 3.4
+Requires:     python3-requests >= 2.9.1
 
 %description
-Search exploits on exploit-db, wordpressexploit.com and wpvulndb.com according to recon informations (version, modules and theme).
+Search exploits on exploit-db, wordpressexploit.com 
+and wpvulndb.com according to recon informations 
+(version, modules and theme).
 
 %files
 %defattr(-,root,root)
-%_bindir/
-%python3_sitelib
+%_bindir/%name
+%python3_sitelib/%name/*
+%python3_sitelib/%name-*
 
 %prep
 %setup -q 
@@ -45,5 +47,10 @@ rm -rf %buildroot
 
 
 %changelog
+* Wed Apr 13 2016 Charles Barcza <info@blackpanther.hu> 0.1.0-2bP
+- build for blackPanther OS v16.x
+- fix specfile
+------------------------------------------------------------------
+
 * Mon Apr 11 2016 Miklos Horvath <hmiki@blackpantheros.eu> 
 - initial version
