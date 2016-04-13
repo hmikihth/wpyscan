@@ -8,7 +8,7 @@ Name:         %name
 Summary:       %Summary
 Summary(hu):   %Summary_hu
 Version:       %version
-Release:       %mkrel 2
+Release:       %mkrel 3
 License:       BEER-WARE
 Distribution: blackPanther OS
 Vendor:       blackPanther Europe
@@ -17,7 +17,8 @@ Group:        Development/Tools
 Source0:      %name-%version.%sourcetype
 Buildroot:     %_tmppath/%name-%version-%release-root
 Requires:     python(abi) >= 3.4
-Requires:     python3-requests >= 2.9.1
+Requires:     python3-requests >= 2.3.0
+Requires:     python3-bs4 >= 4.4.1
 
 %description
 Search exploits on exploit-db, wordpressexploit.com 
