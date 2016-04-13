@@ -58,13 +58,15 @@ def print_plugins_sploits(grabbers, wprecon_results):
 
 def print_theme_sploits(grabbers, wprecon_results):
     # Search theme related sploits
-    theme = wprecon_results['printable_results']['Theme']
-    if theme is not None:
-        print ("[*] Searching sploits for theme %s" % theme)
-        for grabber in grabbers:
-            sploits = grabber.search(theme, 'theme')
-            for sploit in sploits:
-                print ("  [+] %s" % sploit)
+    themes = wprecon_results['printable_results']['Themes']
+    if len(themes) > 0:
+        for theme in themes:
+            theme = theme.split("--")[0].strip()
+            print ("[*] Searching sploits for theme %s" % theme)
+            for grabber in grabbers:
+                sploits = grabber.search(theme, 'theme')
+                for sploit in sploits:
+                    print ("  [+] %s" % sploit)
 
 
 def print_version_sploits(grabbers, wprecon_results):

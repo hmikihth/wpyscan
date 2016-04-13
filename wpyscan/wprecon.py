@@ -14,9 +14,7 @@ import random
 
 class WPRecon():
     def __init__(self, proxy):
-#        requests.packages.urllib3.disable_warnings()
         self.req = requests.Session()
-        self.req.verify = False
         self.version = None
         if proxy is not None:
             self.req.proxies = proxy
@@ -33,14 +31,20 @@ class WPRecon():
         return results
 
     def get_printable_results(self, url):
+        folders = ["wp-content/uploads/", 
+                   "wp-includes/"]
+        themes = self.get_theme(url)
+
+        for theme in themes:
+            folders.append("wp-content/themes/%s/" % theme.split("--")[0].strip())
+        
         results = {
             'Robots': self.get_robots(url),
             'Readme': self.get_readme(url),
-            'Full path disclosure': self.get_fpd(url),
+            'Full path disclosure': self.get_fpd(url, folders),
             'Backup': self.get_backup(url),
-            'Upload_listing': self.get_upload_listing(url),
             'Version': self.get_version(url),
-            'Theme': self.get_theme(url)}
+            'Themes': themes}
         return results
 
     def get_user_agent(self):
@@ -113,15 +117,16 @@ class WPRecon():
         except:
             return None
 
-    def get_fpd(self, url):
+    def get_fpd(self, url, folders):
         headers = {'User-Agent': self.get_user_agent()}
-        page = 'wp-includes/rss-functions.php'
-        full_url = "%s%s" % (url, page)
-        fpd_req = self.req.get(full_url, headers=headers)
-        if fpd_req.status_code == 200:
-            if "Fatal error:" in fpd_req.text:
-                return full_url
-        return None
+        fpd = []
+        for folder in folders:
+            full_url = "%s%s" % (url, folder)
+            fpd_req = self.req.get(full_url, headers=headers)
+            if fpd_req.status_code == 200:
+                if "Index of" in fpd_req.text:
+                    fpd.append(full_url)
+        return fpd 
 
     def get_backup(self, url):
         headers = {'User-Agent': self.get_user_agent()}
@@ -153,15 +158,6 @@ class WPRecon():
         else:
             return backups_find
 
-    def get_upload_listing(self, url):
-        headers = {'User-Agent': self.get_user_agent()}
-        full_url = "%s%s" % (url, "/wp-content/uploads/")
-        upload_req = self.req.get(full_url, headers=headers)
-        if upload_req.status_code == 200:
-            if "index of" in upload_req.text.lower():
-                return full_url
-        return None
-
     def get_version(self, url):
         if self.version is not None:
             return self.version
@@ -176,6 +172,7 @@ class WPRecon():
 
     def get_theme(self, url):
         headers = {'User-Agent': self.get_user_agent()}
+        results = []
         page_req = self.req.get(url, headers=headers)
         soup = BeautifulSoup(page_req.text, "html.parser")
         theme_paths = soup.findAll("link", {"rel": "stylesheet",
@@ -186,5 +183,14 @@ class WPRecon():
                                    re.IGNORECASE)
                 r = regex.findall(theme_path['href'])
                 if len(r) > 0:
-                    return r[0]
-        return None
+                    full_url = "%swp-content/themes/%s/sftp-config.json" % (url, r[0])
+                    page_req = self.req.get(full_url, headers=headers)
+                    if page_req.status_code == 200:
+                        if "password" in page_req.text:
+                            results.append("%s -- (sftp config found : %s)" % (r[0], full_url))
+                        else:
+                            results.append(r[0])
+                    else:
+                        results.append(r[0])
+        results = list(set(results))
+        return results
