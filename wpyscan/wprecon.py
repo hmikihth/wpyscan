@@ -16,6 +16,7 @@ class WPRecon():
     def __init__(self, proxy):
         self.req = requests.Session()
         self.version = None
+        self.readme_version = None
         if proxy is not None:
             self.req.proxies = proxy
 
@@ -106,16 +107,16 @@ class WPRecon():
         headers = {'User-Agent': self.get_user_agent()}
         full_url = "%s%s" % (url, 'readme.html')
         readme_req = self.req.get(full_url, headers=headers)
+        result = None
         try:
             if readme_req.status_code == 200:
               soup = BeautifulSoup(readme_req.text, "html.parser")
               version = soup.find("h1").getText().strip()
-              self.version = version.replace('Version ', '')
-              return full_url
-            else:
-              return None
+              self.readme_version = version.replace('Version ', '')
+              result = full_url
         except:
-            return None
+            pass
+        return result
 
     def get_fpd(self, url, folders):
         headers = {'User-Agent': self.get_user_agent()}
@@ -166,8 +167,18 @@ class WPRecon():
         soup = BeautifulSoup(page_req.text, "html.parser")
         generator = soup.find("meta", {'name': 'generator'})
         if generator is not None:
-            self.version = generator['content'].replace('Wordpress ',
-                                                        '').strip()
+            try:
+                self.version = generator['content'].replace('Wordpress ', '').strip()
+            except:
+                pass
+        else:
+            if self.version is None:                
+                version_pos = page_req.text.find("wp_blog_version")
+                if version_pos != -1:
+                    version_pos += 19
+                    self.version = page_req.text[version_pos:version_pos+page_req.text[version_pos:].find('";')]
+                elif self.readme_version is not none:
+                    self.version = self.readme_version
         return self.version
 
     def get_theme(self, url):
