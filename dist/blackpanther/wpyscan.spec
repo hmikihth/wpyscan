@@ -8,7 +8,7 @@ Name:         %name
 Summary:       %Summary
 Summary(hu):   %Summary_hu
 Version:       %version
-Release:       %mkrel 3
+Release:       %mkrel 4
 License:       BEER-WARE
 Distribution: blackPanther OS
 Vendor:       blackPanther Europe
