@@ -177,7 +177,7 @@ class WPRecon():
                 if version_pos != -1:
                     version_pos += 19
                     self.version = page_req.text[version_pos:version_pos+page_req.text[version_pos:].find('";')]
-                elif self.readme_version is not none:
+                elif self.readme_version is not None:
                     self.version = self.readme_version
         return self.version
 
