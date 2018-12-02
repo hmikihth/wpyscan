@@ -1,0 +1,15 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+argparse = "*"
+requests = "*"
+beautifulsoup4 = "*"
+wpyscan = {editable = true,path = "."}
+
+[requires]
+python_version = "3.7"

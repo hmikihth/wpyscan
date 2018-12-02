@@ -22,7 +22,7 @@ class WPRecon():
 
     def scan(self, url):
         if not url.endswith('/'):
-            url = "%s/" % url
+            url = "{}/".format(url)
 
         results = {'printable_results': [],
                    'plugins': []}
@@ -37,7 +37,7 @@ class WPRecon():
         themes = self.get_theme(url)
 
         for theme in themes:
-            folders.append("wp-content/themes/%s/" % theme.split("--")[0].strip())
+            folders.append("wp-content/themes/{}/".format(theme.split("--")[0].strip()))
         
         results = {
             'Robots': self.get_robots(url),
@@ -90,7 +90,7 @@ class WPRecon():
     def get_robots(self, url):
         robots = []
         headers = {'User-Agent': self.get_user_agent()}
-        full_url = "%s%s" % (url, 'robots.txt')
+        full_url = "{}{}".format(url, 'robots.txt')
         robots_req = self.req.get(full_url, headers=headers)
         if robots_req.status_code == 200:
             robots_text = robots_req.text.split("\r\n")
@@ -105,7 +105,7 @@ class WPRecon():
 
     def get_readme(self, url):
         headers = {'User-Agent': self.get_user_agent()}
-        full_url = "%s%s" % (url, 'readme.html')
+        full_url = "{}{}".format(url, 'readme.html')
         readme_req = self.req.get(full_url, headers=headers)
         result = None
         try:
@@ -122,7 +122,7 @@ class WPRecon():
         headers = {'User-Agent': self.get_user_agent()}
         fpd = []
         for folder in folders:
-            full_url = "%s%s" % (url, folder)
+            full_url = "{}{}".format(url, folder)
             fpd_req = self.req.get(full_url, headers=headers)
             if fpd_req.status_code == 200:
                 if "Index of" in fpd_req.text:
@@ -149,7 +149,7 @@ class WPRecon():
                    "wp-config.original",
                    "wp-config.txt"]
         for backup in backups:
-            full_url = "%s%s" % (url, backup)
+            full_url = "{}{}".format(url, backup)
             backup_req = self.req.get(full_url, headers=headers)
             if backup_req.status_code == 200:
                 backups_find.append(backup)
@@ -194,11 +194,11 @@ class WPRecon():
                                    re.IGNORECASE)
                 r = regex.findall(theme_path['href'])
                 if len(r) > 0:
-                    full_url = "%swp-content/themes/%s/sftp-config.json" % (url, r[0])
+                    full_url = "{}wp-content/themes/{}/sftp-config.json".format(url, r[0])
                     page_req = self.req.get(full_url, headers=headers)
                     if page_req.status_code == 200:
                         if "password" in page_req.text:
-                            results.append("%s -- (sftp config found : %s)" % (r[0], full_url))
+                            results.append("{} -- (sftp config found : {})".format(r[0], full_url))
                         else:
                             results.append(r[0])
                     else:
